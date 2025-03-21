@@ -17,6 +17,7 @@ func Example_config_Parse() {
 	
 	[https://github.com/lucasepe/jviz]
 	comment: Easily visualize and share JSON and YAML structures.
+	fav: true
 	`
 
 	conf, err := config.Parse(strings.NewReader(data))
@@ -24,17 +25,12 @@ func Example_config_Parse() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("download files to: %s\n", conf.Value("", "outdir"))
-
-	for _, name := range conf.Categories() {
-		fmt.Println(name)
-		fmt.Printf(" > %s\n", conf.Value(name, "comment"))
-	}
+	fmt.Println(conf.Categories())
+	fmt.Println(conf.All("https://github.com/lucasepe/jviz"))
+	fmt.Println(conf.Value("", "outdir"))
 
 	// Output:
-	// download files to: /Users/lucasepe/Downloads/repoes-backups
-	// https://github.com/lucasepe/file2go
-	//  > Convert any file to Go source.
-	// https://github.com/lucasepe/jviz
-	//  > Easily visualize and share JSON and YAML structures.
+	// [https://github.com/lucasepe/file2go https://github.com/lucasepe/jviz]
+	// [comment:Easily visualize and share JSON and YAML structures. fav:true]
+	// /Users/lucasepe/Downloads/repoes-backups
 }

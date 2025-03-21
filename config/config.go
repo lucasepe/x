@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 )
@@ -8,6 +9,7 @@ import (
 type Config interface {
 	Categories() []string
 	Value(cat, name string) string
+	All(cat string) []string
 }
 
 var _ Config = (*specImpl)(nil)
@@ -19,6 +21,10 @@ const (
 type param struct {
 	name  string
 	value string
+}
+
+func (p *param) String() string {
+	return fmt.Sprintf("%s:%s", p.name, p.value)
 }
 
 type category struct {
@@ -63,5 +69,22 @@ func (c *specImpl) Categories() []string {
 
 	sort.Strings(all)
 
+	return all
+}
+
+func (c *specImpl) All(cat string) []string {
+	if strings.TrimSpace(cat) == "" {
+		cat = rootSection
+	}
+
+	catMap, ok := c.categoryMap[cat]
+	if !ok || (catMap == nil) || (catMap.params == nil) {
+		return []string{}
+	}
+
+	all := make([]string, 0, len(catMap.params))
+	for _, el := range catMap.params {
+		all = append(all, el.String())
+	}
 	return all
 }

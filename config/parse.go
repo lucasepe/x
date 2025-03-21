@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+
 	"io"
 	"strings"
 )
@@ -66,10 +67,6 @@ func parseOne(c *specImpl, sectionName string, line string) error {
 	secs, ok := c.categoryMap[sectionName]
 	if !ok {
 		secs = &category{sectionName, make(map[string]*param)}
-	}
-
-	if _, ok := secs.params[name]; !ok {
-		secs.params = make(map[string]*param)
 	}
 
 	secs.params[name] = item
