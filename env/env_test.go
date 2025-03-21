@@ -1,11 +1,30 @@
 package env_test
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
 	"github.com/lucasepe/x/env"
 )
+
+func ExampleStrs() {
+	os.Setenv("ASDF", "aaa,bbb,ccc,ddd")
+	defer env.Unset("ASDF")
+
+	all := env.Strs("ASDF", ",")
+	none := env.Strs("ASDF_1", ",")
+	defs := env.Strs("ASDF_1", ",", "one", "two", "three!")
+
+	fmt.Println(all)
+	fmt.Println(none)
+	fmt.Println(defs)
+
+	// Output:
+	// [aaa bbb ccc ddd]
+	// []
+	// [one two three!]
+}
 
 func TestContains(t *testing.T) {
 	env.Unset("ASDF")
@@ -18,7 +37,7 @@ func TestContains(t *testing.T) {
 
 func TestEqual(t *testing.T) {
 	env.Unset("ASDFASDFASDF")
-	if env.Str("ASDFASDFASDF") != "" {
+	if env.Str("ASDFASDFASDF", "") != "" {
 		t.Fail()
 	}
 	os.Setenv("ASDFASDFASDF", "1")

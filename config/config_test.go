@@ -24,11 +24,11 @@ func Example_config_Parse() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("download files to: %s\n", conf.Str("", "outdir"))
+	fmt.Printf("download files to: %s\n", conf.Value("", "outdir"))
 
 	for _, name := range conf.Categories() {
 		fmt.Println(name)
-		fmt.Printf(" > %s\n", conf.Str(name, "comment"))
+		fmt.Printf(" > %s\n", conf.Value(name, "comment"))
 	}
 
 	// Output:

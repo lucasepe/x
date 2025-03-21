@@ -3,6 +3,7 @@ package env_test
 import (
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/lucasepe/x/env"
@@ -22,7 +23,7 @@ VAR_E=one,two,three,four
 		log.Fatal(err)
 	}
 
-	fmt.Println(env.Str("VAR_A"))
+	fmt.Println(os.Getenv("VAR_A"))
 	fmt.Println(env.True("VAR_B"))
 	fmt.Println(env.Int("VAR_C", -1))
 	fmt.Println(env.Int("VAR_D", -1))

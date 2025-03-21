@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func Parse(in io.Reader) (Spec, error) {
+func Parse(in io.Reader) (Config, error) {
 	c := &specImpl{
 		categoryMap: make(map[string]*category),
 	}
