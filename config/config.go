@@ -9,7 +9,7 @@ import (
 type Config interface {
 	Categories() []string
 	Value(cat, name string) string
-	All(cat string) []string
+	All(cat string) map[string]string
 }
 
 var _ Config = (*specImpl)(nil)
@@ -72,19 +72,28 @@ func (c *specImpl) Categories() []string {
 	return all
 }
 
-func (c *specImpl) All(cat string) []string {
+func (c *specImpl) All(cat string) map[string]string {
 	if strings.TrimSpace(cat) == "" {
 		cat = rootSection
 	}
 
+	all := map[string]string{}
+
 	catMap, ok := c.categoryMap[cat]
 	if !ok || (catMap == nil) || (catMap.params == nil) {
-		return []string{}
+		return all
 	}
 
-	all := make([]string, 0, len(catMap.params))
+	keys := make([]string, 0, len(catMap.params))
 	for _, el := range catMap.params {
-		all = append(all, el.String())
+		keys = append(keys, el.name)
 	}
+
+	sort.Strings(keys)
+
+	for _, key := range keys {
+		all[key] = catMap.params[key].value
+	}
+
 	return all
 }

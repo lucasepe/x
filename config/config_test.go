@@ -26,11 +26,21 @@ func Example_config_Parse() {
 	}
 
 	fmt.Println(conf.Categories())
-	fmt.Println(conf.All("https://github.com/lucasepe/jviz"))
 	fmt.Println(conf.Value("", "outdir"))
+	all := conf.All("https://github.com/lucasepe/jviz")
+	for k, v := range all {
+		fmt.Println(k, "->", v)
+	}
+
+	all = conf.All("pippo")
+	if len(all) == 0 {
+		fmt.Println("no values for category 'pippo'")
+	}
 
 	// Output:
 	// [https://github.com/lucasepe/file2go https://github.com/lucasepe/jviz]
-	// [comment:Easily visualize and share JSON and YAML structures. fav:true]
 	// /Users/lucasepe/Downloads/repoes-backups
+	// comment -> Easily visualize and share JSON and YAML structures.
+	// fav -> true
+	// no values for category 'pippo'
 }
