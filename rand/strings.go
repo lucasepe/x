@@ -52,7 +52,7 @@ func Str(src rand.Source, size int, set int) string {
 	rng := rand.New(src)
 
 	buf := make([]byte, size)
-	for i := 0; i < size; i++ {
+	for i := range size {
 		buf[i] = all[rng.Intn(tot)]
 	}
 
