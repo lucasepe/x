@@ -21,7 +21,7 @@ func Eval(template string, opts EvalOptions) ([]byte, error) {
 	etg := []byte(opts.EndTag)
 
 	if n := bytes.Index(tpl, stg); n < 0 {
-		return []byte{}, nil
+		return tpl, nil
 	}
 
 	bb := bytes.Buffer{}
