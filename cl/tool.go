@@ -222,7 +222,6 @@ func explainTask(w io.Writer, cmd Task) {
 }
 
 func printFlags(fs *flag.FlagSet, w io.Writer) {
-	// Calcola la lunghezza massima del nome del flag
 	maxNameLen := 0
 	fs.VisitAll(func(f *flag.Flag) {
 		if len(f.Name) > maxNameLen {
@@ -232,10 +231,13 @@ func printFlags(fs *flag.FlagSet, w io.Writer) {
 
 	indentColumn := 2 + 1 + maxNameLen + 2 // 2 spaces + "-" + name + 2 spaces padding
 
-	// Stampa ogni flag
 	fs.VisitAll(func(f *flag.Flag) {
 		usage := strings.Split(f.Usage, "\n")
+		tot := len(usage)
 		for i, line := range usage {
+			if f.DefValue != "" && (i == (tot - 1)) {
+				line = fmt.Sprintf("%s (default: %s)", line, f.DefValue)
+			}
 			if i == 0 {
 				padding := strings.Repeat(" ", maxNameLen-len(f.Name)+2)
 				fmt.Fprintf(w, "  -%s%s%s\n", f.Name, padding, line)
