@@ -18,14 +18,23 @@ func TestPrintFlags(t *testing.T) {
 			setup: func(fs *flag.FlagSet) {
 				fs.String("name", "default", "The name of the user")
 			},
-			expected: "  -name  The name of the user (default: default)\n\n",
+			expected: strings.Join([]string{
+				"  -name  The name of the user",
+				"          ↳ (default: default)",
+				"",
+			}, "\n"),
 		},
 		{
 			name: "single flag, multi-line usage",
 			setup: func(fs *flag.FlagSet) {
 				fs.String("name", "default", "The name of the user\nUse full name")
 			},
-			expected: "  -name  The name of the user\n         Use full name (default: default)\n\n",
+			expected: strings.Join([]string{
+				"  -name  The name of the user",
+				"         Use full name",
+				"          ↳ (default: default)",
+				"",
+			}, "\n"),
 		},
 		{
 			name: "multiple flags, aligned output",

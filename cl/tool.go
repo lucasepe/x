@@ -235,14 +235,15 @@ func printFlags(fs *flag.FlagSet, w io.Writer) {
 		usage := strings.Split(f.Usage, "\n")
 		tot := len(usage)
 		for i, line := range usage {
-			if f.DefValue != "" && (i == (tot - 1)) {
-				line = fmt.Sprintf("%s (default: %s)", line, f.DefValue)
-			}
 			if i == 0 {
 				padding := strings.Repeat(" ", maxNameLen-len(f.Name)+2)
 				fmt.Fprintf(w, "  -%s%s%s\n", f.Name, padding, line)
 			} else {
 				fmt.Fprintf(w, "%s%s\n", strings.Repeat(" ", indentColumn), line)
+			}
+			if f.DefValue != "" && (i == (tot - 1)) {
+				fmt.Fprintf(w, "%s ↳ (default: %s)",
+					strings.Repeat(" ", indentColumn), f.DefValue)
 			}
 		}
 		fmt.Fprintln(w)
