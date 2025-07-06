@@ -242,7 +242,7 @@ func printFlags(fs *flag.FlagSet, w io.Writer) {
 				fmt.Fprintf(w, "%s%s\n", strings.Repeat(" ", indentColumn), line)
 			}
 			if f.DefValue != "" && (i == (tot - 1)) {
-				fmt.Fprintf(w, "%s ↳ (default: %s)",
+				fmt.Fprintf(w, "%s ↳ (default: %s)\n",
 					strings.Repeat(" ", indentColumn), f.DefValue)
 			}
 		}

@@ -22,6 +22,7 @@ func TestPrintFlags(t *testing.T) {
 				"  -name  The name of the user",
 				"          ↳ (default: default)",
 				"",
+				"",
 			}, "\n"),
 		},
 		{
@@ -33,6 +34,7 @@ func TestPrintFlags(t *testing.T) {
 				"  -name  The name of the user",
 				"         Use full name",
 				"          ↳ (default: default)",
+				"",
 				"",
 			}, "\n"),
 		},
