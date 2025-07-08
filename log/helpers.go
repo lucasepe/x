@@ -23,3 +23,7 @@ func StringSlice(key string, val []string) Field {
 func StringMap(key string, val map[string]string) Field {
 	return Field{Key: key, Encoder: mapStringVal(val)}
 }
+
+func Err(key string, val error) Field {
+	return Field{Key: key, Encoder: errorVal{err: val}}
+}

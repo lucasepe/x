@@ -71,3 +71,13 @@ func (m mapStringVal) Encode(buf *bytes.Buffer) {
 	}
 	buf.WriteByte('}')
 }
+
+type errorVal struct {
+	err error
+}
+
+func (e errorVal) Encode(buf *bytes.Buffer) {
+	if e.err != nil {
+		buf.WriteString(e.err.Error())
+	}
+}
