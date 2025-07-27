@@ -20,8 +20,8 @@ func StringSlice(key string, val []string) Field {
 	return Field{Key: key, Encoder: stringSliceVal(val)}
 }
 
-func StringMap(key string, val map[string]string) Field {
-	return Field{Key: key, Encoder: mapStringVal(val)}
+func Map(key string, val map[string]any) Field {
+	return Field{Key: key, Encoder: mapStringAny(val)}
 }
 
 func Err(key string, val error) Field {
