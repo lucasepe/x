@@ -217,8 +217,15 @@ func explainTask(w io.Writer, cmd Task) {
 	subflags.SetOutput(w)
 	cmd.SetFlags(subflags)
 	//subflags.PrintDefaults()
-	fmt.Fprint(w, "FLAGS:\n\n")
-	printFlags(subflags, w)
+
+	count := 0
+	subflags.VisitAll(func(f *flag.Flag) {
+		count++
+	})
+	if count > 0 {
+		fmt.Fprint(w, "FLAGS:\n\n")
+		printFlags(subflags, w)
+	}
 }
 
 func printFlags(fs *flag.FlagSet, w io.Writer) {

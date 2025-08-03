@@ -154,7 +154,7 @@ func (l *Logger) log(level Level, msg string, fields ...Field) {
 	} else {
 		// Fallback classico in-line
 		for _, f := range fields {
-			buf.WriteByte(' ')
+			buf.WriteString("   ")
 			buf.WriteString(f.Key)
 			buf.WriteByte('=')
 			f.Encoder.Encode(buf)
