@@ -42,7 +42,8 @@ type Tool struct {
 	topFlags *flag.FlagSet // top-level flags
 	name     string        // normally path.Base(os.Args[0])
 
-	Banner func(io.Writer)
+	Header func(io.Writer)
+	Footer func(io.Writer)
 
 	Explain          func(io.Writer)             // A function to print a top level usage explanation. Can be overridden.
 	ExplainTaskGroup func(io.Writer, *TaskGroup) // A function to print a command group's usage explanation. Can be overridden.
@@ -122,6 +123,14 @@ func (cdr *Tool) VisitGroups(fn func(*TaskGroup)) {
 	}
 }
 
+// VisitAll visits the top level flags in lexicographical order, calling fn
+// for each. It visits all flags, even those not set.
+func (cdr *Tool) VisitAll(fn func(*flag.Flag)) {
+	if cdr.topFlags != nil {
+		cdr.topFlags.VisitAll(fn)
+	}
+}
+
 // Execute should be called once the top-level-flags on a Commander
 // have been initialized. It finds the correct subcommand and executes
 // it, and returns an ExitStatus with the result. On a usage error, an
@@ -144,9 +153,22 @@ func (cdr *Tool) Execute(ctx context.Context, args ...any) ExitStatus {
 			f := flag.NewFlagSet(name, flag.ContinueOnError)
 			f.Usage = func() { cdr.ExplainTask(cdr.Error, cmd) }
 			cmd.SetFlags(f)
-			if f.Parse(cdr.topFlags.Args()[1:]) != nil {
+
+			if err := f.Parse(cdr.topFlags.Args()[1:]); err != nil {
+				if err == flag.ErrHelp {
+					// For top-level flags, `flags.Parse()` will handle
+					// `--help` and `-h` flags by printing usage information
+					// and exiting with status 0 (success).
+					//
+					// For consistency, we return ExitSuccess here so that
+					// calling a subcommand with `--help` or `-h` will also be
+					// treated as success.
+					return ExitSuccess
+				}
+
 				return ExitUsageError
 			}
+
 			return cmd.Execute(ctx, f, args...)
 		}
 	}
@@ -154,6 +176,15 @@ func (cdr *Tool) Execute(ctx context.Context, args ...any) ExitStatus {
 	// Cannot find this command.
 	cdr.topFlags.Usage()
 	return ExitUsageError
+}
+
+// countFlags returns the number of top-level flags defined, even those not set.
+func (cdr *Tool) countTopFlags() int {
+	count := 0
+	cdr.VisitAll(func(*flag.Flag) {
+		count++
+	})
+	return count
 }
 
 // Sorting of a slice of command groups.
@@ -167,16 +198,26 @@ func (p byGroupName) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 // explain prints a brief description of all the subcommands and the
 // important top-level flags.
 func (cdr *Tool) explain(w io.Writer) {
-	if cdr.Banner != nil {
-		cdr.Banner(w)
+	if cdr.Header != nil {
+		cdr.Header(w)
 	}
+
 	fmt.Fprintf(w, "USAGE:\n\n")
-	fmt.Fprintf(w, "  %s [flags] <COMMAND>\n\n", cdr.name)
+	if cdr.countTopFlags() == 0 {
+		fmt.Fprintf(w, "  %s <COMMAND>\n\n", cdr.name)
+	} else {
+		fmt.Fprintf(w, "  %s [flags] <COMMAND>\n\n", cdr.name)
+	}
 
 	sort.Sort(byGroupName(cdr.tasks))
 	for _, group := range cdr.tasks {
 		cdr.ExplainTaskGroup(w, group)
 	}
+
+	if cdr.Footer != nil {
+		cdr.Footer(w)
+	}
+
 	if cdr.topFlags == nil {
 		fmt.Fprintln(w, "\nNo top level flags.")
 		return
