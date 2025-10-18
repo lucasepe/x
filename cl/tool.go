@@ -203,7 +203,7 @@ func (cdr *Tool) explain(w io.Writer) {
 	}
 
 	fmt.Fprintf(w, "USAGE:\n\n")
-	if cdr.countTopFlags() == 0 {
+	if cdr.topFlags.NFlag() > 0 {
 		fmt.Fprintf(w, "  %s <COMMAND>\n\n", cdr.name)
 	} else {
 		fmt.Fprintf(w, "  %s [flags] <COMMAND>\n\n", cdr.name)
