@@ -140,7 +140,7 @@ func (cdr *Tool) VisitAll(fn func(*flag.Flag)) {
 func (cdr *Tool) Execute(ctx context.Context, args ...any) ExitStatus {
 	if cdr.topFlags.NArg() < 1 {
 		cdr.topFlags.Usage()
-		return ExitUsageError
+		return ExitSuccess
 	}
 
 	name := cdr.topFlags.Arg(0)
@@ -178,15 +178,6 @@ func (cdr *Tool) Execute(ctx context.Context, args ...any) ExitStatus {
 	return ExitUsageError
 }
 
-// countFlags returns the number of top-level flags defined, even those not set.
-func (cdr *Tool) countTopFlags() int {
-	count := 0
-	cdr.VisitAll(func(*flag.Flag) {
-		count++
-	})
-	return count
-}
-
 // Sorting of a slice of command groups.
 type byGroupName []*TaskGroup
 
@@ -203,7 +194,7 @@ func (cdr *Tool) explain(w io.Writer) {
 	}
 
 	fmt.Fprintf(w, "USAGE:\n\n")
-	if cdr.topFlags.NFlag() > 0 {
+	if cdr.topFlags.NFlag() <= 0 {
 		fmt.Fprintf(w, "  %s <COMMAND>\n\n", cdr.name)
 	} else {
 		fmt.Fprintf(w, "  %s [flags] <COMMAND>\n\n", cdr.name)
