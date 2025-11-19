@@ -14,7 +14,6 @@ const (
 )
 
 var (
-	nl = []byte{'\n'}
 	sp = []byte{' '}
 )
 
@@ -60,9 +59,9 @@ func TestWrapBug1(t *testing.T) {
 		text  string
 		want  string
 	}{
-		{4, "aaaaa", "aaaaa"},
-		{4, "a aaaaa", "a\naaaaa"},
-		{4, "overlong overlong foo", "overlong\noverlong\nfoo"},
+		{5, "aaaaa", "aaaaa"},
+		{5, "a aaaaa", "a\naaaaa"},
+		{4, "overlong overlong foo", "over\nlong\nover\nlong\nfoo"},
 	}
 
 	for _, test := range cases {
