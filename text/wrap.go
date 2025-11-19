@@ -22,6 +22,10 @@ func Wrap(s string, lim int) string {
 // raggedness.
 func WrapBytes(b []byte, lim int) []byte {
 	words := bytes.Split(bytes.Replace(bytes.TrimSpace(b), nl, sp, -1), sp)
+
+	// spezza le parole troppo lunghe PRIMA del wrap
+	words = splitLongWords(words, lim)
+
 	var lines [][]byte
 	for _, line := range WrapWords(words, 1, lim, defaultPenalty) {
 		lines = append(lines, bytes.Join(line, sp))
@@ -83,4 +87,24 @@ func WrapWords(words [][]byte, spc, lim, pen int) [][][]byte {
 		i = nbrk[i]
 	}
 	return lines
+}
+
+func splitLongWords(words [][]byte, lim int) [][]byte {
+	var out [][]byte
+	for _, w := range words {
+		if len(w) <= lim {
+			out = append(out, w)
+			continue
+		}
+
+		// Spezzare la parola lunga in chunk di max "lim"
+		for len(w) > lim {
+			out = append(out, w[:lim])
+			w = w[lim:]
+		}
+		if len(w) > 0 {
+			out = append(out, w)
+		}
+	}
+	return out
 }
