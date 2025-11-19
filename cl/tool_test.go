@@ -60,7 +60,7 @@ func TestPrintFlags(t *testing.T) {
 			tt.setup(fs)
 
 			var buf bytes.Buffer
-			printFlags(fs, &buf)
+			PrintFlags(fs, &buf)
 
 			got := buf.String()
 			if got != tt.expected {
