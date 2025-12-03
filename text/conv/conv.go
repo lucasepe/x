@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-// Strs returns a slice of strings by splitting the value associated with
-// the 'name' using the specified separator 'sep'.
+// Strs returns a slice of strings by splitting the
+// value using the specified separator 'sep'.
 // If the value is empty, the provided default values are used.
 func Strs(value, sep string, defaultValues ...string) []string {
 	if value == "" {
@@ -112,35 +112,35 @@ func Duration(value string, defaultValue time.Duration) time.Duration {
 	return res
 }
 
-func RGBA(value string) (r, g, b, a int) {
+func RGBA(value string) (r, g, b, a uint8) {
 	value = strings.TrimPrefix(value, "#")
 
 	a = 255
 
 	switch len(value) {
 	case 3: // Short format (RGB)
-		r = ParseHex(string(value[0]), 0)
-		g = ParseHex(string(value[1]), 0)
-		b = ParseHex(string(value[2]), 0)
+		r = parseHex(string(value[0]), 0)
+		g = parseHex(string(value[1]), 0)
+		b = parseHex(string(value[2]), 0)
 		// expand from 4-bit to 8-bit
 		r |= r << 4
 		g |= g << 4
 		b |= b << 4
 	case 6: // Long format no alpha (RRGGBB)
-		r = ParseHex(string(value[0:2]), 0)
-		g = ParseHex(string(value[2:4]), 0)
-		b = ParseHex(string(value[4:6]), 0)
+		r = parseHex(string(value[0:2]), 0)
+		g = parseHex(string(value[2:4]), 0)
+		b = parseHex(string(value[4:6]), 0)
 	case 8: // Long format with alpha (RRGGBBAA)
-		r = ParseHex(string(value[0:2]), 0)
-		g = ParseHex(string(value[2:4]), 0)
-		b = ParseHex(string(value[4:6]), 0)
-		a = ParseHex(string(value[6:8]), 255)
+		r = parseHex(string(value[0:2]), 0)
+		g = parseHex(string(value[2:4]), 0)
+		b = parseHex(string(value[4:6]), 0)
+		a = parseHex(string(value[6:8]), 255)
 	}
 
 	return
 }
 
-func ParseHex(value string, fallback int) int {
+func parseHex(value string, fallback uint8) uint8 {
 	value = strings.TrimPrefix(value, "0x")
 
 	size := len(value) * 4 // len(s)*4 since each hex use 4 bit
@@ -149,5 +149,5 @@ func ParseHex(value string, fallback int) int {
 		return fallback
 	}
 
-	return int(got)
+	return uint8(got)
 }
