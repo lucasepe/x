@@ -124,7 +124,7 @@ func HomeDir() string {
 // to the home directory of the current user
 func ExpandUser(path string) string {
 	// this is a simpler alternative to using os.UserHomeDir (which requires Go 1.12 or later)
-	if strings.HasPrefix(path, "~") {
+	if path == "~" || strings.HasPrefix(path, "~/") {
 		// Expand ~ to the home directory
 		path = strings.Replace(path, "~", HomeDir(), 1)
 	} else if strings.HasPrefix(path, "$HOME") {

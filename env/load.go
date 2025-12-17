@@ -17,6 +17,12 @@ func Load(in io.Reader) (err error) {
 			continue
 		}
 
+		// 1. Expand environment variables ($VAR, ${VAR})
+		val = os.ExpandEnv(val)
+
+		// 2. Expand ~ or $HOME at the beginning
+		val = ExpandUser(val)
+
 		err2 := os.Setenv(key, val)
 		if err2 != nil {
 			err = errors.Join(err, err2)
