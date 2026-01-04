@@ -192,11 +192,20 @@ func (cdr *Tool) explain(w io.Writer) {
 		cdr.Header(w)
 	}
 
+	counter := 0
+	if cdr.topFlags != nil {
+		cdr.topFlags.VisitAll(func(f *flag.Flag) {
+			counter = counter + 1
+		})
+	}
+
 	fmt.Fprintf(w, "USAGE:\n\n")
-	if cdr.topFlags.NFlag() <= 0 {
+	if counter == 0 {
 		fmt.Fprintf(w, "  %s <COMMAND>\n\n", cdr.name)
 	} else {
 		fmt.Fprintf(w, "  %s [flags] <COMMAND>\n\n", cdr.name)
+		fmt.Fprint(w, "FLAGS:\n\n")
+		PrintFlags(cdr.topFlags, w)
 	}
 
 	sort.Sort(byGroupName(cdr.tasks))
