@@ -55,7 +55,7 @@ func Parse(in io.Reader) (Config, error) {
 }
 
 func parseOne(c *specImpl, sectionName string, line string) error {
-	parts := strings.SplitN(line, ":", 2)
+	parts := strings.SplitN(line, "=", 2)
 	if len(parts) != 2 {
 		return fmt.Errorf("invalid line format, should be 'key: value'")
 	}
