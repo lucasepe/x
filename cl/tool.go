@@ -3,6 +3,7 @@
 package cl
 
 import (
+	"bytes"
 	"context"
 	"flag"
 	"fmt"
@@ -11,7 +12,7 @@ import (
 	"sort"
 
 	"github.com/lucasepe/x/text"
-	"github.com/lucasepe/x/text/table"
+	"github.com/lucasepe/x/text/tabular"
 )
 
 // A Task represents a single command.
@@ -240,13 +241,30 @@ func explainGroup(w io.Writer, group *TaskGroup) {
 	}
 	sort.Sort(group)
 
-	tbl := table.New()
-	tbl.Separator = "     "
-	tbl.Wrap = true
+	var cmdLen, synLen int
 	for _, cmd := range group.tasks {
-		tbl.AddRow(cmd.Name(), cmd.Synopsis())
+		if l := len(cmd.Name()); l > cmdLen {
+			cmdLen = l
+		}
+
+		if l := len(cmd.Synopsis()); l > synLen {
+			synLen = l
+		}
 	}
-	fmt.Fprintln(w, text.Indent(tbl.String(), "  "))
+
+	tbl := tabular.New()
+	tbl.Gap = 4
+	tbl.AddColumn("cmd", "Name", cmdLen)
+	tbl.AddColumn("syn", "Synopsis", synLen)
+
+	nfo := tbl.Build(tabular.All)
+
+	tmp := bytes.Buffer{}
+	for _, cmd := range group.tasks {
+		fmt.Fprintf(&tmp, nfo.Format, cmd.Name(), cmd.Synopsis())
+	}
+
+	fmt.Fprintln(w, text.Indent(tmp.String(), "  "))
 	fmt.Fprintln(w)
 }
 

@@ -3,7 +3,7 @@ package stripansi_test
 import (
 	"fmt"
 
-	"github.com/lucasepe/x/stripansi"
+	"github.com/lucasepe/x/text/stripansi"
 )
 
 func ExampleStrip() {
