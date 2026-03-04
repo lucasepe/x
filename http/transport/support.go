@@ -4,20 +4,21 @@ import (
 	"net/http"
 )
 
-// cloneRequest creates a shallow copy of the request along with a deep copy of the Headers.
+// cloneRequest crea una copia shallow della request e una copia deep degli
+// header, cosi' i middleware possono modificarli senza effetti collaterali.
 func cloneRequest(req *http.Request) *http.Request {
 	r := new(http.Request)
 
-	// shallow clone
+	// Copia strutturale della request.
 	*r = *req
 
-	// deep copy headers
+	// Copia profonda della mappa header.
 	r.Header = cloneHeader(req.Header)
 
 	return r
 }
 
-// cloneHeader creates a deep copy of an http.Header.
+// cloneHeader restituisce una copia profonda di un [http.Header].
 func cloneHeader(in http.Header) http.Header {
 	out := make(http.Header, len(in))
 	for key, values := range in {

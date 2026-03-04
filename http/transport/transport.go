@@ -6,6 +6,9 @@ import (
 	"time"
 )
 
+// Default costruisce un [http.Transport] con parametri sensati per client CLI
+// e servizi generici: keep-alive abilitato, supporto HTTP/2 e timeout
+// conservativi sulle fasi piu' costose della connessione.
 func Default() *http.Transport {
 	dialer := &net.Dialer{
 		Timeout:   30 * time.Second,
